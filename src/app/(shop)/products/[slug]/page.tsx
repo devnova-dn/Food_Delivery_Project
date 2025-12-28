@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { getProductBySlug, getRelatedProducts, addReview } from '@/actions/product';
 import { useCartStore } from '@/context/CartStore';
 import { formatCurrency, calculateDiscountPercentage } from '@/lib/utils';
 import { IProduct } from '@/types';
@@ -24,49 +23,12 @@ import {
   Leaf,
 } from 'lucide-react';
 
-export default function ProductDetailPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-
-  const [product, setProduct] = useState<IProduct | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [isAdding, setIsAdding] = useState(false);
-  const [activeTab, setActiveTab] = useState<'description' | 'reviews' | 'nutrition'>('description');
-  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
-  const [showReviewForm, setShowReviewForm] = useState(false);
-
-  const { addItem, openCart } = useCartStore();
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      setLoading(true);
-      const [productResult, relatedResult] = await Promise.all([
-        getProductBySlug(slug),
-        getRelatedProducts('fresh-produce', '1', 4), // Demo category
-      ]);
-
-      if (productResult.success && productResult.data) {
-        setProduct(productResult.data as IProduct);
-      }
-
-      if (relatedResult.success && relatedResult.data) {
-        setRelatedProducts(relatedResult.data as IProduct[]);
-      }
-
-      setLoading(false);
-    };
-
-    fetchProduct();
-  }, [slug]);
-
-  // Demo product data
-  const demoProduct: IProduct = {
-    _id: '1',
-    title: 'Organic Hass Avocados (Pack of 4)',
-    slug: 'organic-hass-avocados-pack-4',
+// Données de produits (même que dans la page produits)
+const demoProducts: IProduct[] = [
+  {
+    _id: 'ID00000001',
+    title: 'Organic Avocados (Pack of 4)',
+    slug: 'organic-avocados-pack-4',
     description: `Our premium Organic Hass Avocados are carefully sourced from sustainable farms in California, where the ideal climate produces the richest, most flavorful avocados.
 
 Each avocado is hand-picked at peak ripeness to ensure perfect texture and taste. Our organic farming practices guarantee no synthetic pesticides or fertilizers are used, making these avocados a healthy choice for your family.
@@ -120,80 +82,243 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
         createdAt: new Date('2024-12-05'),
       },
     ],
-  };
+  },
+  {
+    _id: 'ID00000002',
+    title: 'Extra Virgin Olive Oil',
+    slug: 'extra-virgin-olive-oil',
+    description: `Cold-pressed from the finest Italian olives, this extra virgin olive oil is perfect for salads, cooking, and dipping.`,
+    shortDescription: 'Premium cold-pressed Italian olive oil.',
+    price: 24.99,
+    images: [
+      'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&q=80',
+      'https://images.unsplash.com/photo-1561112075-c1d4f0c3de1c?w=800&q=80',
+    ],
+    category: 'pantry',
+    brand: 'GourmetHub',
+    stock: 100,
+    unit: 'bottle',
+    ingredients: ['Extra Virgin Olive Oil'],
+    nutritionalInfo: {
+      calories: 120,
+      protein: 0,
+      carbohydrates: 0,
+      fat: 14,
+      fiber: 0,
+    },
+    allergens: [],
+    isOrganic: false,
+    isFeatured: true,
+    rating: 4.9,
+    numReviews: 456,
+    reviews: [
+      {
+        userId: '3',
+        userName: 'Anna K.',
+        rating: 5,
+        comment: 'Excellent quality oil, perfect for Mediterranean dishes.',
+        createdAt: new Date('2024-12-12'),
+      },
+    ],
+  },
+  {
+    _id: 'ID00000003',
+    title: 'Fresh Atlantic Salmon',
+    slug: 'fresh-atlantic-salmon',
+    description: `Wild-caught Atlantic salmon, rich in omega-3s and bursting with flavor. Perfect for grilling or baking.`,
+    shortDescription: 'Wild-caught Atlantic salmon fillet.',
+    price: 18.99,
+    discountPrice: 15.99,
+    images: [
+      'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=800&q=80',
+      'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80',
+    ],
+    category: 'meat-seafood',
+    brand: 'Ocean Fresh',
+    stock: 30,
+    unit: 'kg',
+    ingredients: ['Atlantic Salmon'],
+    nutritionalInfo: {
+      calories: 208,
+      protein: 20,
+      carbohydrates: 0,
+      fat: 13,
+      fiber: 0,
+    },
+    allergens: ['Fish'],
+    isOrganic: false,
+    isFeatured: true,
+    rating: 4.7,
+    numReviews: 189,
+    reviews: [
+      {
+        userId: '4',
+        userName: 'John D.',
+        rating: 5,
+        comment: 'Fresh and delicious, great quality salmon!',
+        createdAt: new Date('2024-12-08'),
+      },
+    ],
+  },
+  {
+    _id: 'ID00000004',
+    title: 'Artisan Sourdough Bread',
+    slug: 'artisan-sourdough-bread',
+    description: `Traditional sourdough bread with a crispy crust and soft, tangy interior. Made with organic flour.`,
+    shortDescription: 'Traditional sourdough with crispy crust.',
+    price: 6.99,
+    images: [
+      'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80',
+      'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=800&q=80',
+    ],
+    category: 'bakery',
+    brand: "Baker's Choice",
+    stock: 25,
+    unit: 'loaf',
+    ingredients: ['Organic Wheat Flour', 'Water', 'Sea Salt', 'Sourdough Starter'],
+    nutritionalInfo: {
+      calories: 80,
+      protein: 3,
+      carbohydrates: 15,
+      fat: 1,
+      fiber: 2,
+    },
+    allergens: ['Gluten'],
+    isOrganic: true,
+    isFeatured: true,
+    rating: 4.8,
+    numReviews: 312,
+    reviews: [
+      {
+        userId: '5',
+        userName: 'Maria S.',
+        rating: 5,
+        comment: 'Perfect crust and texture, just like bakery fresh!',
+        createdAt: new Date('2024-12-09'),
+      },
+    ],
+  },
+  // Ajoutez les autres produits ici (copiez depuis votre page products)...
+  {
+    _id: 'ID00000005',
+    title: 'Organic Strawberries',
+    slug: 'organic-strawberries',
+    description: 'Sweet, juicy organic strawberries, perfect for snacking or desserts.',
+    shortDescription: 'Sweet organic strawberries.',
+    price: 8.99,
+    images: ['https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=500&q=80'],
+    category: 'fresh-produce',
+    brand: 'Farm Fresh',
+    stock: 40,
+    unit: 'pack',
+    isOrganic: true,
+    isFeatured: true,
+    rating: 4.6,
+    numReviews: 278,
+    reviews: [],
+  },
+  {
+    _id: 'ID00000006',
+    title: 'Greek Yogurt Premium',
+    slug: 'greek-yogurt-premium',
+    description: 'Creamy Greek yogurt made from 100% grass-fed cow\'s milk.',
+    shortDescription: 'Creamy Greek yogurt from grass-fed cows.',
+    price: 5.49,
+    images: ['https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&q=80'],
+    category: 'dairy-eggs',
+    brand: 'Dairy Delight',
+    stock: 60,
+    unit: 'container',
+    isOrganic: false,
+    isFeatured: true,
+    rating: 4.7,
+    numReviews: 421,
+    reviews: [],
+  },
+];
 
-  const displayProduct = product || demoProduct;
-  const displayRelated = relatedProducts.length > 0 ? relatedProducts : [
-    {
-      _id: '2',
-      title: 'Organic Tomatoes (500g)',
-      slug: 'organic-tomatoes-500g',
-      shortDescription: 'Vine-ripened organic tomatoes.',
-      price: 4.99,
-      images: ['https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&q=80'],
-      category: 'fresh-produce',
-      brand: 'Farm Fresh',
-      stock: 60,
-      unit: 'pack',
-      isOrganic: true,
-      isFeatured: true,
-      rating: 4.6,
-      numReviews: 189,
-      reviews: [],
-    },
-    {
-      _id: '3',
-      title: 'Fresh Lemons (Pack of 6)',
-      slug: 'fresh-lemons-pack-6',
-      shortDescription: 'Bright and zesty organic lemons.',
-      price: 3.99,
-      images: ['https://images.unsplash.com/photo-1568569350062-ebfa3cb195df?w=500&q=80'],
-      category: 'fresh-produce',
-      brand: 'Citrus Grove',
-      stock: 80,
-      unit: 'pack',
-      isOrganic: true,
-      isFeatured: false,
-      rating: 4.7,
-      numReviews: 234,
-      reviews: [],
-    },
-    {
-      _id: '4',
-      title: 'Organic Spinach (200g)',
-      slug: 'organic-spinach-200g',
-      shortDescription: 'Crisp and tender baby spinach.',
-      price: 3.49,
-      images: ['https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500&q=80'],
-      category: 'fresh-produce',
-      brand: 'Green Valley',
-      stock: 45,
-      unit: 'pack',
-      isOrganic: true,
-      isFeatured: true,
-      rating: 4.8,
-      numReviews: 156,
-      reviews: [],
-    },
-  ];
+export default function ProductDetailPage() {
+  const params = useParams();
+  const slug = params.slug as string;
 
-  const discountPercentage = calculateDiscountPercentage(displayProduct.price, displayProduct.discountPrice);
-  const finalPrice = displayProduct.discountPrice || displayProduct.price;
+  const [product, setProduct] = useState<IProduct | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
+  const [activeTab, setActiveTab] = useState<'description' | 'reviews' | 'nutrition'>('description');
+
+  const { addItem, openCart } = useCartStore();
+
+  useEffect(() => {
+    if (!slug) return;
+
+    // Trouver le produit par slug
+    const foundProduct = demoProducts.find(p => p.slug === slug);
+    
+    if (foundProduct) {
+      setProduct(foundProduct);
+      
+      // Trouver des produits similaires (même catégorie)
+      const related = demoProducts
+        .filter(p => p.category === foundProduct.category && p.slug !== slug)
+        .slice(0, 4);
+      setRelatedProducts(related);
+    }
+    
+    setLoading(false);
+  }, [slug]);
+
+  // Si aucun produit trouvé
+  if (!loading && !product) {
+    return (
+      <div className="min-h-screen bg-secondary-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 text-red-500 mb-4">❌</div>
+          <h2 className="text-2xl font-bold text-secondary-900 mb-2">Product Not Found</h2>
+          <p className="text-secondary-600 mb-6">The product you're looking for doesn't exist.</p>
+          <Link 
+            href="/products" 
+            className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition-colors"
+          >
+            Browse Products
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading || !product) {
+    return (
+      <div className="min-h-screen bg-secondary-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent 
+                        rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-secondary-600">Loading product...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Maintenant on est sûr que product n'est pas null
+  const discountPercentage = calculateDiscountPercentage(product.price, product.discountPrice);
+  const finalPrice = product.discountPrice || product.price;
 
   const handleAddToCart = () => {
     setIsAdding(true);
 
     addItem({
-      productId: displayProduct._id!,
-      title: displayProduct.title,
-      slug: displayProduct.slug,
-      image: displayProduct.images[0],
+      productId: product._id!,
+      title: product.title,
+      slug: product.slug,
+      image: product.images[0],
       price: finalPrice,
       quantity,
-      maxQuantity: displayProduct.stock,
+      maxQuantity: product.stock,
     });
 
-    toast.success(`${displayProduct.title} added to cart!`, {
+    toast.success(`${product.title} added to cart!`, {
       icon: '🛒',
       duration: 2000,
     });
@@ -206,37 +331,18 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
     openCart();
   };
 
-  const renderStars = (rating: number, interactive = false) => {
+  const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <button
+      <Star
         key={i}
-        type="button"
-        disabled={!interactive}
-        onClick={() => interactive && setReviewForm({ ...reviewForm, rating: i + 1 })}
-        className={`${interactive ? 'cursor-pointer' : 'cursor-default'}`}
-      >
-        <Star
-          className={`w-5 h-5 ${
-            i < Math.floor(rating)
-              ? 'fill-accent-400 text-accent-400'
-              : 'text-secondary-300'
-          } ${interactive && i < reviewForm.rating ? 'text-accent-400' : ''}`}
-        />
-      </button>
+        className={`w-5 h-5 ${
+          i < Math.floor(rating)
+            ? 'fill-accent-400 text-accent-400'
+            : 'text-secondary-300'
+        }`}
+      />
     ));
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-secondary-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary-600 border-t-transparent 
-                        rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-secondary-600">Loading product...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-secondary-50">
@@ -253,14 +359,14 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
             </Link>
             <ChevronRight className="w-4 h-4 text-secondary-400" />
             <Link
-              href={`/products?category=${displayProduct.category}`}
+              href={`/products?category=${product.category}`}
               className="text-secondary-500 hover:text-secondary-700"
             >
-              {displayProduct.category}
+              {product.category}
             </Link>
             <ChevronRight className="w-4 h-4 text-secondary-400" />
             <span className="text-secondary-900 font-medium truncate max-w-xs">
-              {displayProduct.title}
+              {product.title}
             </span>
           </nav>
         </div>
@@ -274,13 +380,14 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
             <div className="space-y-4">
               <div className="relative aspect-square rounded-2xl overflow-hidden bg-secondary-100">
                 <Image
-                  src={displayProduct.images[selectedImage]}
-                  alt={displayProduct.title}
+                  src={product.images[selectedImage]}
+                  alt={product.title}
                   fill
                   className="object-cover"
                   priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
                 />
-                {displayProduct.isOrganic && (
+                {product.isOrganic && (
                   <div className="absolute top-4 left-4 px-3 py-1 bg-green-500 text-white 
                                 text-sm font-semibold rounded-full flex items-center gap-1">
                     <Leaf className="w-4 h-4" />
@@ -295,7 +402,7 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
                 )}
               </div>
               <div className="flex gap-3 overflow-x-auto">
-                {displayProduct.images.map((image, index) => (
+                {product.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -308,9 +415,10 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
                   >
                     <Image
                       src={image}
-                      alt={`${displayProduct.title} ${index + 1}`}
+                      alt={`${product.title} ${index + 1}`}
                       fill
                       className="object-cover"
+                      sizes="80px"
                     />
                   </button>
                 ))}
@@ -320,16 +428,16 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
             {/* Product Info */}
             <div className="space-y-6">
               <div>
-                <p className="text-primary-600 font-medium mb-2">{displayProduct.brand}</p>
+                <p className="text-primary-600 font-medium mb-2">{product.brand}</p>
                 <h1 className="text-3xl font-display font-bold text-secondary-900 mb-4">
-                  {displayProduct.title}
+                  {product.title}
                 </h1>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1">
-                    {renderStars(displayProduct.rating)}
+                    {renderStars(product.rating)}
                   </div>
                   <span className="text-secondary-600">
-                    {displayProduct.rating} ({displayProduct.numReviews} reviews)
+                    {product.rating} ({product.numReviews} reviews)
                   </span>
                 </div>
               </div>
@@ -339,26 +447,26 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
                 <span className="text-4xl font-bold text-secondary-900">
                   {formatCurrency(finalPrice)}
                 </span>
-                {displayProduct.discountPrice && (
+                {product.discountPrice && (
                   <span className="text-xl text-secondary-400 line-through">
-                    {formatCurrency(displayProduct.price)}
+                    {formatCurrency(product.price)}
                   </span>
                 )}
-                <span className="text-secondary-500">per {displayProduct.unit}</span>
+                <span className="text-secondary-500">per {product.unit}</span>
               </div>
 
               {/* Short Description */}
               <p className="text-secondary-600 leading-relaxed">
-                {displayProduct.shortDescription}
+                {product.shortDescription}
               </p>
 
               {/* Stock Status */}
               <div className="flex items-center gap-2">
-                {displayProduct.stock > 0 ? (
+                {product.stock > 0 ? (
                   <>
                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
                     <span className="text-green-600 font-medium">
-                      In Stock ({displayProduct.stock} available)
+                      In Stock ({product.stock} available)
                     </span>
                   </>
                 ) : (
@@ -382,7 +490,7 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
                   </button>
                   <span className="w-12 text-center font-semibold text-lg">{quantity}</span>
                   <button
-                    onClick={() => setQuantity(Math.min(displayProduct.stock, quantity + 1))}
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                     className="w-10 h-10 flex items-center justify-center bg-secondary-100 
                              rounded-lg hover:bg-secondary-200 transition-colors"
                   >
@@ -395,8 +503,10 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
               <div className="flex gap-4">
                 <button
                   onClick={handleAddToCart}
-                  disabled={isAdding || displayProduct.stock === 0}
-                  className="flex-1 btn-primary flex items-center justify-center gap-2 py-4"
+                  disabled={isAdding || product.stock === 0}
+                  className="flex-1 py-4 bg-primary-600 text-white font-semibold rounded-xl 
+                           hover:bg-primary-700 transition-colors disabled:opacity-50 
+                           disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isAdding ? (
                     <>
@@ -413,8 +523,10 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
                 </button>
                 <button
                   onClick={handleBuyNow}
-                  disabled={displayProduct.stock === 0}
-                  className="flex-1 btn-outline"
+                  disabled={product.stock === 0}
+                  className="flex-1 py-4 bg-white border-2 border-primary-600 text-primary-600 
+                           font-semibold rounded-xl hover:bg-primary-50 transition-colors
+                           disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Buy Now
                 </button>
@@ -455,7 +567,7 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
           <div className="flex border-b border-secondary-100">
             {[
               { id: 'description', label: 'Description' },
-              { id: 'reviews', label: `Reviews (${displayProduct.numReviews})` },
+              { id: 'reviews', label: `Reviews (${product.numReviews})` },
               { id: 'nutrition', label: 'Nutrition' },
             ].map((tab) => (
               <button
@@ -481,16 +593,16 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
                 <div
                   className="text-secondary-600 whitespace-pre-line leading-relaxed"
                   dangerouslySetInnerHTML={{
-                    __html: displayProduct.description.replace(/\n/g, '<br/>'),
+                    __html: product.description.replace(/\n/g, '<br/>'),
                   }}
                 />
-                {displayProduct.ingredients && displayProduct.ingredients.length > 0 && (
+                {product.ingredients && product.ingredients.length > 0 && (
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold text-secondary-900 mb-3">
                       Ingredients
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {displayProduct.ingredients.map((ingredient, index) => (
+                      {product.ingredients.map((ingredient, index) => (
                         <span
                           key={index}
                           className="px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full"
@@ -510,110 +622,72 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
                 <div className="flex items-start gap-8 p-6 bg-secondary-50 rounded-2xl">
                   <div className="text-center">
                     <div className="text-5xl font-bold text-secondary-900 mb-2">
-                      {displayProduct.rating}
+                      {product.rating}
                     </div>
-                    <div className="flex mb-2">{renderStars(displayProduct.rating)}</div>
-                    <p className="text-secondary-500">{displayProduct.numReviews} reviews</p>
+                    <div className="flex mb-2">{renderStars(product.rating)}</div>
+                    <p className="text-secondary-500">{product.numReviews} reviews</p>
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-secondary-900 mb-4">Customer Reviews</h3>
-                    {displayProduct.reviews.map((review, index) => (
-                      <div key={index} className="mb-4 pb-4 border-b border-secondary-200 last:border-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center 
-                                        justify-center text-primary-600 font-semibold">
-                            {review.userName.charAt(0)}
-                          </div>
-                          <div>
-                            <p className="font-medium text-secondary-900">{review.userName}</p>
-                            <div className="flex items-center gap-2">
-                              {renderStars(review.rating)}
-                              <span className="text-sm text-secondary-500">
-                                {new Date(review.createdAt).toLocaleDateString()}
-                              </span>
+                    {product.reviews && product.reviews.length > 0 ? (
+                      product.reviews.map((review, index) => (
+                        <div key={index} className="mb-4 pb-4 border-b border-secondary-200 last:border-0">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center 
+                                          justify-center text-primary-600 font-semibold">
+                              {review.userName.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="font-medium text-secondary-900">{review.userName}</p>
+                              <div className="flex items-center gap-2">
+                                {renderStars(review.rating)}
+                                <span className="text-sm text-secondary-500">
+                                  {new Date(review.createdAt).toLocaleDateString()}
+                                </span>
+                              </div>
                             </div>
                           </div>
+                          <p className="text-secondary-600">{review.comment}</p>
                         </div>
-                        <p className="text-secondary-600">{review.comment}</p>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-secondary-500">No reviews yet. Be the first to review!</p>
+                    )}
                   </div>
                 </div>
               </div>
             )}
 
-            {activeTab === 'nutrition' && (
+            {activeTab === 'nutrition' && product.nutritionalInfo && (
               <div className="max-w-md">
                 <h3 className="text-lg font-semibold text-secondary-900 mb-4">
                   Nutritional Information
                 </h3>
                 <p className="text-secondary-500 mb-4">Per serving (approximately 1/5 of product)</p>
-                {displayProduct.nutritionalInfo && (
-                  <div className="space-y-3">
-                    {[
-                      { label: 'Calories', value: displayProduct.nutritionalInfo.calories, unit: 'kcal' },
-                      { label: 'Protein', value: displayProduct.nutritionalInfo.protein, unit: 'g' },
-                      { label: 'Carbohydrates', value: displayProduct.nutritionalInfo.carbohydrates, unit: 'g' },
-                      { label: 'Fat', value: displayProduct.nutritionalInfo.fat, unit: 'g' },
-                      { label: 'Fiber', value: displayProduct.nutritionalInfo.fiber, unit: 'g' },
-                    ].map((nutrient) => (
-                      <div
-                        key={nutrient.label}
-                        className="flex items-center justify-between py-3 border-b border-secondary-100"
-                      >
-                        <span className="text-secondary-700">{nutrient.label}</span>
-                        <span className="font-semibold text-secondary-900">
-                          {nutrient.value} {nutrient.unit}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="space-y-3">
+                  {[
+                    { label: 'Calories', value: product.nutritionalInfo.calories, unit: 'kcal' },
+                    { label: 'Protein', value: product.nutritionalInfo.protein, unit: 'g' },
+                    { label: 'Carbohydrates', value: product.nutritionalInfo.carbohydrates, unit: 'g' },
+                    { label: 'Fat', value: product.nutritionalInfo.fat, unit: 'g' },
+                    { label: 'Fiber', value: product.nutritionalInfo.fiber, unit: 'g' },
+                  ].map((nutrient) => (
+                    <div
+                      key={nutrient.label}
+                      className="flex items-center justify-between py-3 border-b border-secondary-100"
+                    >
+                      <span className="text-secondary-700">{nutrient.label}</span>
+                      <span className="font-semibold text-secondary-900">
+                        {nutrient.value} {nutrient.unit}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Related Products */}
-        <div className="mt-12">
-          <div className="flex items-center gap-2 mb-6">
-            <Sparkles className="w-6 h-6 text-accent-500" />
-            <h2 className="text-2xl font-display font-bold text-secondary-900">
-              You May Also Like
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {displayRelated.map((product) => (
-              <Link
-                key={product._id}
-                href={`/products/${product.slug}`}
-                className="card overflow-hidden group"
-              >
-                <div className="relative aspect-square overflow-hidden">
-                  <Image
-                    src={product.images[0]}
-                    alt={product.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-                <div className="p-4">
-                  <p className="text-sm text-primary-600 font-medium">{product.brand}</p>
-                  <h3 className="font-semibold text-secondary-900 mb-1 group-hover:text-primary-600 
-                               transition-colors line-clamp-1">
-                    {product.title}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-secondary-900">
-                      {formatCurrency(product.discountPrice || product.price)}
-                    </span>
-                    <span className="text-sm text-secondary-500">/ {product.unit}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

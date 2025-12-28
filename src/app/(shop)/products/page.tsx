@@ -25,7 +25,7 @@ function ProductsContent() {
   
  const demoProducts: IProduct[] = products.length > 0 ? products : [
     {
-      _id: '1',
+      _id: 'ID00000001',
       title: 'Organic Avocados (Pack of 4)',
       slug: 'organic-avocados-pack-4',
       description: 'Premium Hass avocados, organically grown and hand-picked at peak ripeness.',
@@ -44,7 +44,7 @@ function ProductsContent() {
       reviews: [],
     },
     {
-      _id: '2',
+      _id: 'ID00000002',
       title: 'Extra Virgin Olive Oil',
       slug: 'extra-virgin-olive-oil',
       description: 'Cold-pressed from the finest Italian olives, perfect for salads and cooking.',
@@ -62,7 +62,7 @@ function ProductsContent() {
       reviews: [],
     },
     {
-      _id: '3',
+      _id: 'ID00000003',
       title: 'Fresh Atlantic Salmon',
       slug: 'fresh-atlantic-salmon',
       description: 'Wild-caught Atlantic salmon, rich in omega-3s and bursting with flavor.',
@@ -81,7 +81,7 @@ function ProductsContent() {
       reviews: [],
     },
     {
-      _id: '4',
+      _id: 'ID00000004',
       title: 'Artisan Sourdough Bread',
       slug: 'artisan-sourdough-bread',
       description: 'Traditional sourdough bread with a crispy crust and soft, tangy interior.',
@@ -99,7 +99,7 @@ function ProductsContent() {
       reviews: [],
     },
     {
-      _id: '5',
+      _id: 'ID00000005',
       title: 'Organic Strawberries',
       slug: 'organic-strawberries',
       description: 'Sweet, juicy organic strawberries, perfect for snacking or desserts.',
@@ -117,7 +117,7 @@ function ProductsContent() {
       reviews: [],
     },
     {
-      _id: '6',
+      _id: 'ID00000006',
       title: 'Greek Yogurt Premium',
       slug: 'greek-yogurt-premium',
       description: 'Creamy Greek yogurt made from 100% grass-fed cow\'s milk.',
@@ -136,7 +136,7 @@ function ProductsContent() {
     },
     
     {
-      _id: '8',
+      _id: 'ID00000007',
       title: 'Organic Wildflower Honey',
       slug: 'organic-wildflower-honey',
       description: 'Pure, unfiltered honey from organic wildflowers. Rich and aromatic.',
@@ -154,7 +154,7 @@ function ProductsContent() {
       reviews: [],
     },
     {
-  _id: '9',
+  _id: 'ID00000008',
   title: 'Grass-Fed Beef Steak',
   slug: 'grass-fed-beef-steak',
   description: 'Premium grass-fed beef steak, tender and full of flavor.',
@@ -172,7 +172,7 @@ function ProductsContent() {
   reviews: [],
 },
 {
-  _id: '10',
+  _id: 'ID00000009',
   title: 'Free-Range Chicken Breast',
   slug: 'free-range-chicken-breast',
   description: 'Tender free-range chicken breast, responsibly sourced.',
@@ -190,7 +190,7 @@ function ProductsContent() {
   reviews: [],
 },
 {
-  _id: '11',
+  _id: 'ID00000010',
   title: 'Organic Brown Eggs',
   slug: 'organic-brown-eggs',
   description: 'Fresh organic brown eggs from free-roaming hens.',
@@ -208,7 +208,7 @@ function ProductsContent() {
   reviews: [],
 },
 {
-    _id: '12',
+    _id: 'ID00000011',
     title: 'Organic Blueberries',
     slug: 'organic-blueberries',
     description: 'Sweet and juicy organic blueberries, perfect for snacking and desserts.',
@@ -226,7 +226,7 @@ function ProductsContent() {
     reviews: [],
   },
   {
-    _id: '13',
+    _id: 'ID00000012',
     title: 'Almond Butter',
     slug: 'almond-butter',
     description: 'Creamy and smooth almond butter, perfect for toast or baking.',
@@ -244,7 +244,7 @@ function ProductsContent() {
     reviews: [],
   },
   {
-    _id: '14',
+    _id: 'ID00000013',
     title: 'Organic Spinach',
     slug: 'organic-spinach',
     description: 'Fresh organic spinach, great for salads and smoothies.',
@@ -262,7 +262,7 @@ function ProductsContent() {
     reviews: [],
   },
   {
-    _id: '15',
+    _id: 'ID00000014',
     title: 'Quinoa Premium',
     slug: 'quinoa-premium',
     description: 'High-quality premium quinoa, rich in protein and fiber.',
@@ -280,7 +280,7 @@ function ProductsContent() {
     reviews: [],
   },
   {
-    _id: '16',
+    _id: 'ID00000015',
     title: 'Dark Chocolate Bar',
     slug: 'dark-chocolate-bar',
     description: 'Rich dark chocolate with 70% cocoa content, perfect for snacking.',
@@ -298,7 +298,7 @@ function ProductsContent() {
     reviews: [],
   },
   {
-    _id: '17',
+    _id: 'ID00000016',
     title: 'Greek Feta Cheese',
     slug: 'greek-feta-cheese',
     description: 'Authentic Greek feta cheese, creamy and tangy.',
