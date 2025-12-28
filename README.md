@@ -41,7 +41,7 @@ A comprehensive, production-ready e-commerce website for food products built wit
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/gourmethub.git
+git clone https://github.com/devnova-dn/Food_Delivery_Project.git
 cd Gourmethub
 ```
 
@@ -235,7 +235,7 @@ db.users.insertOne({
 ```bash
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/yourusername/gourmethub.git
+git remote add origin https://github.com/devnova-dn/Food_Delivery_Project.git
 git push -u origin main
 ```
 
@@ -397,6 +397,6 @@ MIT License - feel free to use this project for your own purposes.
 
 ---
 
-Built with ❤️ by [MiniMax Agent]
+Built with ❤️ by devnova team
 # Food_Delivery_Project
 # Food_Delivery_Project
