@@ -19,10 +19,10 @@ export default function RegisterPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+const [errors, setErrors] = useState<Record<string, string | undefined>>({});
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Record<string, string | undefined> = {};
 
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
