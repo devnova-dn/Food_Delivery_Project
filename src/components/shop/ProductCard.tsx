@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 interface ProductCardProps {
@@ -15,8 +16,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const params = useParams();
-  const signin = params?.signin === 'true';
+    const searchParams = useSearchParams();
+  const signin = searchParams.get('signin') === 'true';
   const router = useRouter();
   const { addItem } = useCartStore();
   const [isAdding, setIsAdding] = useState(false);
@@ -32,33 +33,22 @@ export default function ProductCard({ product }: ProductCardProps) {
     console.log('==================');
   };
 
-  const handleViewDetails = (e: React.MouseEvent) => {
-     e.stopPropagation();  
+const handleViewDetails = (e: React.MouseEvent) => {
+  e.stopPropagation();
+
   const path = signin
     ? `/products/${product.slug}?signin=true`
     : `/products/${product.slug}`;
 
-  router.push(path);
-    testNavigation();
-    
-    try {
-      console.log('Attempting navigation to:', `/products/${product.slug}`);
-      
-      // Alternative 1: Utiliser window.location
-      // window.location.href = `/products/${product.slug}`;
-      
-      // Alternative 2: Utiliser Link de Next.js (voir le bouton ci-dessous)
-      
-      // Alternative 3: Utiliser router avec timeout
-      setTimeout(() => {
-        router.push(`/products/${product.slug}`);
-      }, 100);
-      
-    } catch (error) {
-      console.error('Navigation error:', error);
-      toast.error('Navigation failed');
-    }
-  };
+  try {
+    router.push(path);
+    console.log('Navigating to:', path);
+  } catch (error) {
+    console.error('Navigation error:', error);
+    toast.error('Navigation failed');
+  }
+};
+
 
   const discountPercentage = product.discountPrice
     ? calculateDiscountPercentage(product.price, product.discountPrice)
@@ -195,8 +185,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-sm text-primary-600 font-medium mb-1">{product.brand}</p>
         
         {/* Version 3: Link autour du titre */}
-        <Link 
-          href={`/products/${product.slug}`}
+       <Link
+  href={signin ? `/products/${product.slug}?signin=true` : `/products/${product.slug}`}
           className="block group/title"
           onClick={(e) => {
             console.log('Link clicked for:', product.slug);

@@ -531,15 +531,7 @@ export default function ProductDetailPage() {
                     </>
                   )}
                 </button>
-                <button
-                  onClick={handleBuyNow}
-                  disabled={product.stock === 0}
-                  className="flex-1 py-4 bg-white border-2 border-primary-600 text-primary-600 
-                           font-semibold rounded-xl hover:bg-primary-50 transition-colors
-                           disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Buy Now
-                </button>
+               
                 <button className="w-14 h-14 flex items-center justify-center border border-secondary-200 
                                  rounded-xl hover:bg-secondary-50 transition-colors">
                   <Heart className="w-6 h-6 text-secondary-400 hover:text-red-500" />
