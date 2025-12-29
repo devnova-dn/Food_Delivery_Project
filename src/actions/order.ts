@@ -31,7 +31,6 @@ export async function createOrder(data: {
     });
 
     revalidatePath('/account');
-    revalidatePath('/admin/orders');
 
     return { success: true, data: order as IOrder, message: 'Order created successfully' };
   } catch (error) {
