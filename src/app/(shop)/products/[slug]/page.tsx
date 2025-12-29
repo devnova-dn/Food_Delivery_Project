@@ -7,6 +7,8 @@ import { useParams } from 'next/navigation';
 import { useCartStore } from '@/context/CartStore';
 import { formatCurrency, calculateDiscountPercentage } from '@/lib/utils';
 import { IProduct } from '@/types';
+import { useRouter } from 'next/navigation';
+
 import toast from 'react-hot-toast';
 import {
   ShoppingCart,
@@ -240,7 +242,8 @@ Perfect for guacamole, toast, salads, or simply enjoying on their own with a spr
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-
+  const router = useRouter();
+  const signin = params?.signin === 'true';
   const [product, setProduct] = useState<IProduct | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -306,6 +309,13 @@ export default function ProductDetailPage() {
   const finalPrice = product.discountPrice || product.price;
 
   const handleAddToCart = () => {
+    if (!signin) {
+    toast.error('You must be signed in to add products to cart!', {
+      duration: 3000,
+    });
+    router.push('/login'); // redirect vers login
+    return;
+  }
     setIsAdding(true);
 
     addItem({

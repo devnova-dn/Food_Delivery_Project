@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 interface HeroSlide {
   id: number;
@@ -53,6 +54,8 @@ const heroSlides: HeroSlide[] = [
 ];
 
 export default function HeroSection() {
+  const searchParams = useSearchParams();
+  const signin = searchParams.get('signin') === 'true';
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -79,6 +82,9 @@ export default function HeroSection() {
   };
 
   const slide = heroSlides[currentSlide];
+  const ctaLink = signin
+  ? `${slide.ctaLink}${slide.ctaLink.includes('?') ? '&' : '?'}signin=true`
+  : slide.ctaLink;
 
   return (
     <section className="relative overflow-hidden bg-secondary-900">
@@ -135,7 +141,7 @@ export default function HeroSection() {
 
             {/* CTA Button */}
             <Link
-              href={slide.ctaLink}
+              href={ctaLink}
               className="inline-flex items-center gap-2 px-8 py-4 bg-primary-500 text-white 
                        font-semibold rounded-xl hover:bg-primary-400 transition-all 
                        transform hover:scale-105 shadow-lg shadow-primary-500/25

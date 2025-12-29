@@ -5,8 +5,12 @@ import { X, Grid, List, SlidersHorizontal } from 'lucide-react';
 import ProductCard from '@/components/shop/ProductCard';
 import FilterSidebar from '@/components/shop/FilterSidebar';
 import { IProduct } from '@/types';
-
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 function ProductsContent() {
+   const params = useParams();
+    const router = useRouter();
+    const signin = params?.signin === 'true';
   const [products, setProducts] = useState<IProduct[]>([]);
   const [filters, setFilters] = useState({
     category: '',

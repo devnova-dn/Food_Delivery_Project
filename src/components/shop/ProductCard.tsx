@@ -9,16 +9,18 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { useParams } from 'next/navigation';
 interface ProductCardProps {
   product: IProduct;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const params = useParams();
+  const signin = params?.signin === 'true';
+  const router = useRouter();
   const { addItem } = useCartStore();
   const [isAdding, setIsAdding] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const router = useRouter();
 
   // Fonction de débogage
   const testNavigation = () => {
@@ -31,9 +33,12 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   const handleViewDetails = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    // Test de débogage
+     e.stopPropagation();  
+  const path = signin
+    ? `/products/${product.slug}?signin=true`
+    : `/products/${product.slug}`;
+
+  router.push(path);
     testNavigation();
     
     try {
@@ -60,6 +65,13 @@ export default function ProductCard({ product }: ProductCardProps) {
     : 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
+    if (!signin) {
+    toast.error('You must be signed in to add products to cart!', {
+      duration: 3000,
+    });
+    router.push('/login'); // redirect vers login
+    return;
+  }
     e.stopPropagation();
     setIsAdding(true);
 
@@ -81,10 +93,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     setTimeout(() => setIsAdding(false), 500);
   };
 
-  const handleWishlistClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toast('❤️ Added to wishlist!', { duration: 1500 });
-  };
 
   const renderStars = (rating: number) =>
     Array.from({ length: 5 }, (_, i) => (
@@ -150,11 +158,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   {/* View Details */}
    <button
-            onClick={(e) => {
-              e.stopPropagation();
-              console.log('Using window.location for:', product.slug);
-              window.location.href = `/products/${product.slug}`;
-            }}
+            onClick={handleViewDetails}
             className="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-secondary-600 hover:text-primary-600 hover:bg-primary-50 transition-all duration-300"
     aria-label="View details"
   >

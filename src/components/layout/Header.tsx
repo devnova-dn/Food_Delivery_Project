@@ -34,11 +34,17 @@ export default function Header() {
   };
 
   const itemCount = mounted ? getItemCount() : 0;
+const navLinks = [
+  {
+    href: showCartButton ? '/?signin=true' : '/',
+    label: 'Home',
+  },
+  {
+    href: showCartButton ? '/products?signin=true' : '/products',
+    label: 'Shop',
+  },
+];
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/products', label: 'Shop' },
-  ];
 
   return (
     <header

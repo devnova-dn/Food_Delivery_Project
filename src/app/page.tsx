@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Truck, Shield, RefreshCw, Headphones, Star, Sparkles } from 'lucide-react';
@@ -7,12 +8,16 @@ import ProductCard from '@/components/shop/ProductCard';
 import { formatCurrency } from '@/lib/utils';
 import HeroSection from '../components/shop/HeroSection';
 import DemoProductCard from '../components/shop/DemoProductCard';
-
 import { useCartStore } from '@/context/CartStore';
 import toast from 'react-hot-toast';
-
+type PageProps = {
+  searchParams: {
+    signin?: string;
+  };
+};
 // Server Component - Fetch data on server
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: PageProps) {
+  const signin =searchParams?.signin === 'true';
   
   const [featuredResult, categoriesResult] = await Promise.all([
     getFeaturedProducts(8),
@@ -158,18 +163,12 @@ export default async function HomePage() {
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Link
-                    href="/products"
+                    href={signin ? '/products?signin=true' : '/products'}
                     className="btn-primary"
                   >
                     Shop Now
                   </Link>
-                  <Link
-                    href="/products?category=organic"
-                    className="btn-secondary bg-white/10 text-white border-white/20 
-                             hover:bg-white/20"
-                  >
-                    Explore Organic
-                  </Link>
+                 
                 </div>
               </div>
             </div>
