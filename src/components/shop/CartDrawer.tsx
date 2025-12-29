@@ -51,7 +51,7 @@ export default function CartDrawer() {
               {items.length}
             </span>
           </div>
-          <button onClick={closeCart} className="p-2 hover:bg-secondary-100 rounded-lg">
+          <button type='button' title='Close Cart' onClick={closeCart} className="p-2 hover:bg-secondary-100 rounded-lg">
             <X className="w-6 h-6 text-secondary-500" />
           </button>
         </div>
@@ -71,6 +71,8 @@ export default function CartDrawer() {
                   <p className="text-sm text-secondary-500">{formatCurrency(item.price)} each</p>
                   <div className="flex items-center gap-2 mt-2">
                     <button
+                      type='button'
+                      title='Decrease Quantity'
                       onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                       className="w-8 h-8 flex items-center justify-center bg-white border rounded-lg"
                     >
@@ -78,6 +80,8 @@ export default function CartDrawer() {
                     </button>
                     <span>{item.quantity}</span>
                     <button
+                      type='button'
+                      title='Increase Quantity'
                       onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                       disabled={item.quantity >= item.maxQuantity}
                       className="w-8 h-8 flex items-center justify-center bg-white border rounded-lg disabled:opacity-50"

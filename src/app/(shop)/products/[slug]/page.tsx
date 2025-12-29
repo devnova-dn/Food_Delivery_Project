@@ -492,6 +492,8 @@ export default function ProductDetailPage() {
                 <span className="text-secondary-700 font-medium">Quantity:</span>
                 <div className="flex items-center gap-2">
                   <button
+                  type='button'
+                  title='Decrease Quantity'
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="w-10 h-10 flex items-center justify-center bg-secondary-100 
                              rounded-lg hover:bg-secondary-200 transition-colors"
@@ -500,6 +502,8 @@ export default function ProductDetailPage() {
                   </button>
                   <span className="w-12 text-center font-semibold text-lg">{quantity}</span>
                   <button
+                  type='button'
+                  title='Increase Quantity'
                     onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                     className="w-10 h-10 flex items-center justify-center bg-secondary-100 
                              rounded-lg hover:bg-secondary-200 transition-colors"
@@ -532,14 +536,21 @@ export default function ProductDetailPage() {
                   )}
                 </button>
                
-                <button className="w-14 h-14 flex items-center justify-center border border-secondary-200 
-                                 rounded-xl hover:bg-secondary-50 transition-colors">
-                  <Heart className="w-6 h-6 text-secondary-400 hover:text-red-500" />
-                </button>
-                <button className="w-14 h-14 flex items-center justify-center border border-secondary-200 
-                                 rounded-xl hover:bg-secondary-50 transition-colors">
-                  <Share2 className="w-6 h-6 text-secondary-400" />
-                </button>
+                <button
+  type="button"
+  aria-label="Add to Wishlist"
+  className="w-14 h-14 flex items-center justify-center border border-secondary-200 rounded-xl hover:bg-secondary-50 transition-colors"
+>
+  <Heart className="w-6 h-6 text-secondary-400 hover:text-red-500" />
+</button>
+
+<button
+  type="button"
+  aria-label="Share Product"
+  className="w-14 h-14 flex items-center justify-center border border-secondary-200 rounded-xl hover:bg-secondary-50 transition-colors"
+>
+  <Share2 className="w-6 h-6 text-secondary-400" />
+</button>
               </div>
 
               {/* Benefits */}

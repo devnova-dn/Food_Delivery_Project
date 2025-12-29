@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
+import {  signOut } from 'next-auth/react';
 import { useCartStore } from '@/context/CartStore';
 import { Search, ShoppingBag, User, Menu, X, LogOut, LayoutDashboard } from 'lucide-react';
  import { useSearchParams } from 'next/navigation';
 export default function Header() {
     const searchParams = useSearchParams();
   const showCartButton = searchParams.get('signin') === 'true';
-  const { data: session } = useSession();
   const { getItemCount, openCart, toggleCart } = useCartStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -127,7 +126,7 @@ const navLinks = [
               )}
             {/* User menu */}
            <div className="relative">
-  {session || showCartButton ? (
+  {showCartButton ? (
     <>
       <button
       

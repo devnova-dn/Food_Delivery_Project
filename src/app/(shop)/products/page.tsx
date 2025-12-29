@@ -431,7 +431,11 @@ function ProductsContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           <FilterSidebar
-            filters={filters}
+            filters={{
+    ...filters,
+    minPrice: filters.minPrice ?? 0, // default to 0
+    maxPrice: filters.maxPrice ?? 0, // default to 0
+  }}
             onFilterChange={handleFilterChange}
             onClearAll={handleClearAll}
             isOpen={showFilters}
@@ -450,21 +454,26 @@ function ProductsContent() {
               </button>
 
               <div className="flex items-center gap-4">
-                <label className="text-secondary-600 text-sm hidden sm:block">Sort by:</label>
-                <select
-                  value={filters.sort}
-                  onChange={(e) => handleFilterChange({ sort: e.target.value })}
-                  className="px-4 py-2 bg-white border border-secondary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-secondary-700"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+               <label htmlFor="sortSelect" className="text-secondary-600 text-sm hidden sm:block sr-only">
+  Sort products by :
+</label>
+<select
+  id="sortSelect"
+  value={filters.sort}
+  onChange={(e) => handleFilterChange({ sort: e.target.value })}
+  className="px-4 py-2 bg-white border border-secondary-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 text-secondary-700"
+>
+  {sortOptions.map((option) => (
+    <option key={option.value} value={option.value}>
+      {option.label}
+    </option>
+  ))}
+</select>
 
                 <div className="hidden sm:flex items-center bg-white border border-secondary-200 rounded-xl">
                   <button
+                  type='button'
+                  title='Switch to Grid View'
                     onClick={() => setViewMode('grid')}
                     className={`p-2 rounded-l-xl transition-colors ${
                       viewMode === 'grid' ? 'bg-primary-100 text-primary-600' : 'text-secondary-400 hover:text-secondary-600'
@@ -473,6 +482,8 @@ function ProductsContent() {
                     <Grid className="w-5 h-5" />
                   </button>
                   <button
+                  type='button'
+                  title='Switch to List View'
                     onClick={() => setViewMode('list')}
                     className={`p-2 rounded-r-xl transition-colors ${
                       viewMode === 'list' ? 'bg-primary-100 text-primary-600' : 'text-secondary-400 hover:text-secondary-600'
@@ -490,7 +501,7 @@ function ProductsContent() {
                 {filters.category && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm">
                     {filters.category}
-                    <button onClick={() => handleFilterChange({ category: '' })}>
+                    <button type='button' title='Remove Category Filter' onClick={() => handleFilterChange({ category: '' })}>
                       <X className="w-4 h-4" />
                     </button>
                   </span>
@@ -498,7 +509,7 @@ function ProductsContent() {
                 {filters.brand && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm">
                     {filters.brand}
-                    <button onClick={() => handleFilterChange({ brand: '' })}>
+                    <button type='button' title='Remove Brand Filter' onClick={() => handleFilterChange({ brand: '' })}>
                       <X className="w-4 h-4" />
                     </button>
                   </span>
@@ -506,7 +517,7 @@ function ProductsContent() {
                 {filters.isOrganic && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
                     🌿 Organic
-                    <button onClick={() => handleFilterChange({ isOrganic: false })}>
+                    <button type='button' title='Remove Organic Filter' onClick={() => handleFilterChange({ isOrganic: false })}>
                       <X className="w-4 h-4" />
                     </button>
                   </span>
@@ -514,7 +525,7 @@ function ProductsContent() {
                 {(filters.minPrice || filters.maxPrice) && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-accent-100 text-accent-700 rounded-full text-sm">
                     ${filters.minPrice || 0} - ${filters.maxPrice || '∞'}
-                    <button onClick={() => handleFilterChange({ minPrice: undefined, maxPrice: undefined })}>
+                    <button type='button' title='Remove Price Filter' onClick={() => handleFilterChange({ minPrice: undefined, maxPrice: undefined })}>
                       <X className="w-4 h-4" />
                     </button>
                   </span>

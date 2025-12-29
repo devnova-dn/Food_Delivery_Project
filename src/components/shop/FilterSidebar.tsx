@@ -90,6 +90,8 @@ export default function FilterSidebar({
         <div className="flex items-center justify-between p-4 lg:hidden border-b border-secondary-100">
           <h2 className="text-xl font-display font-bold text-secondary-900">Filters</h2>
           <button
+          type='button'
+          title='Close Filter Sidebar'
             onClick={onClose}
             className="p-2 hover:bg-secondary-100 rounded-lg transition-colors"
           >

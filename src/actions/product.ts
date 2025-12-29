@@ -215,7 +215,6 @@ export async function deleteProduct(id: string): Promise<ProductResponse> {
       return { success: false, error: 'Product not found' };
     }
 
-    revalidatePath('/admin/products');
     revalidatePath('/');
 
     return { success: true, message: 'Product deleted successfully' };

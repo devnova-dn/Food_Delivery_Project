@@ -155,6 +155,8 @@ export default function HeroSection() {
 
         {/* Navigation Arrows */}
         <button
+        type='button'
+        title='Previous Slide'
           onClick={prevSlide}
           className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 
                    backdrop-blur-sm rounded-full flex items-center justify-center 
@@ -163,6 +165,8 @@ export default function HeroSection() {
           <ChevronLeft className="w-6 h-6" />
         </button>
         <button
+        type='button'
+        title='Next Slide'
           onClick={nextSlide}
           className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 
                    backdrop-blur-sm rounded-full flex items-center justify-center 
@@ -175,6 +179,8 @@ export default function HeroSection() {
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3">
           {heroSlides.map((_, index) => (
             <button
+            type='button'
+            title='Next Slide'
               key={index}
               onClick={() => {
                 if (!isAnimating) {
