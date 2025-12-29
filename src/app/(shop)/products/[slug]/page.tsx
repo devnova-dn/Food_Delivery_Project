@@ -1,5 +1,5 @@
-'use client';
 
+'use client';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -305,7 +305,10 @@ export default function ProductDetailPage() {
   }
 
   // Maintenant on est sûr que product n'est pas null
-  const discountPercentage = calculateDiscountPercentage(product.price, product.discountPrice);
+const discountPercentage =
+  product.discountPrice !== undefined
+    ? calculateDiscountPercentage(product.price, product.discountPrice)
+    : 0;
   const finalPrice = product.discountPrice || product.price;
 
   const handleAddToCart = () => {

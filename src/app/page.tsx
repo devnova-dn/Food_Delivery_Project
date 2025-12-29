@@ -10,6 +10,8 @@ import HeroSection from '../components/shop/HeroSection';
 import DemoProductCard from '../components/shop/DemoProductCard';
 import { useCartStore } from '@/context/CartStore';
 import toast from 'react-hot-toast';
+import { IProduct } from '@/types';
+
 type PageProps = {
   searchParams: {
     signin?: string;
@@ -24,7 +26,9 @@ export default async function HomePage({ searchParams }: PageProps) {
     getCategories(),
   ]);
 
-  const featuredProducts = featuredResult.data || [];
+const featuredProducts: IProduct[] = Array.isArray(featuredResult.data)
+  ? featuredResult.data
+  : [];
   const categories = categoriesResult.length > 0 ? categoriesResult : [
     { id: 'fresh-produce', name: 'Fresh Produce', count: 24 },
     { id: 'dairy-eggs', name: 'Dairy & Eggs', count: 18 },

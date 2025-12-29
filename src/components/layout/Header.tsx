@@ -1,18 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useCartStore } from '@/context/CartStore';
 import { Search, ShoppingBag, User, X, LogOut } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { useCartStore } from '@/context/CartStore';
 
 export default function Header() {
   const searchParams = useSearchParams();
+  const { getItemCount, openCart } = useCartStore();
+
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { getItemCount, openCart } = useCartStore();
 
   useEffect(() => {
     setMounted(true);
@@ -21,19 +21,17 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const showCartButton = mounted && searchParams.get('signin') === 'true';
-  const itemCount = mounted ? getItemCount() : 0;
+  if (!mounted) return null;
 
-  const navLinks = [
-    {
-      href: showCartButton ? '/?signin=true' : '/',
-      label: 'Home',
-    },
-    {
-      href: showCartButton ? '/products?signin=true' : '/products',
-      label: 'Shop',
-    },
-  ];
+  const isAuth = searchParams.get('signin') === 'true';
+  const itemCount = getItemCount();
+
+  const homeHref = isAuth ? '/?signin=true' : '/';
+  const shopHref = isAuth ? '/products?signin=true' : '/products';
+
+  const navigate = (href: string) => {
+    window.location.href = href;
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,53 +40,38 @@ export default function Header() {
     }
   };
 
-  const handleNavigate = (href: string) => {
-    window.location.href = href;
-  };
-
-  if (!mounted) return null; // Avoid hydration issues
-
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-white shadow-sm'
+      className={`sticky top-0 z-50 transition-all ${
+        isScrolled ? 'bg-white/95 backdrop-blur shadow-md' : 'bg-white shadow-sm'
       }`}
     >
       {/* Top bar */}
-      <div className="bg-primary-600 text-white text-sm py-2">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span>Free delivery on orders over $50 | Use code GOURMET10 for 10% off</span>
-        </div>
+      <div className="bg-primary-600 text-white text-sm py-2 text-center">
+        Free delivery on orders over $50 | Use code GOURMET10
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Top row */}
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-primary-600 rounded-xl flex items-center justify-center 
-                            group-hover:bg-primary-700 transition-colors">
-              <span className="text-white font-display font-bold text-xl md:text-2xl">G</span>
+          <button onClick={() => navigate(homeHref)} className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-xl">G</span>
             </div>
-            <div className="hidden sm:block">
-              <span className="font-display font-bold text-xl md:text-2xl text-secondary-900">
-                GourmetHub
-              </span>
-              <p className="text-xs text-secondary-500 -mt-1">Premium Food Store</p>
-            </div>
-          </Link>
+            <span className="hidden sm:block font-bold text-xl">GourmetHub</span>
+          </button>
 
-          {/* Desktop search */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-8">
+          {/* Search desktop */}
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 mx-8">
             <div className="relative w-full">
               <input
-                type="text"
-                placeholder="Search for fresh produce, organic items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-secondary-50 border-0 rounded-xl 
-                           focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder:text-secondary-400 transition-all"
+                placeholder="Search products..."
+                className="w-full pl-12 pr-4 py-3 bg-gray-100 rounded-xl focus:ring-2 focus:ring-primary-500"
               />
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
           </form>
 
@@ -97,109 +80,68 @@ export default function Header() {
             {/* Mobile search toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 hover:bg-secondary-100 rounded-lg transition-colors"
+              className="md:hidden p-2"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Search className="w-6 h-6" />}
+              {isMobileMenuOpen ? <X /> : <Search />}
             </button>
 
             {/* Cart */}
-            {showCartButton && (
-              <button
-                onClick={openCart}
-                className="relative p-2 hover:bg-secondary-100 rounded-lg transition-colors"
-              >
-                <ShoppingBag className="w-6 h-6" />
+            {isAuth && (
+              <button onClick={openCart} className="relative p-2">
+                <ShoppingBag />
                 {itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {itemCount > 99 ? '99+' : itemCount}
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {itemCount}
                   </span>
                 )}
               </button>
             )}
 
-            {/* User menu */}
-            {showCartButton ? (
+            {/* Auth */}
+            {isAuth ? (
               <button
-                onClick={() => handleNavigate('/')}
-                className="flex items-center gap-2 p-2 hover:bg-red-500 rounded-lg transition-colors"
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 p-2 text-red-600"
               >
                 <LogOut className="w-4 h-4" /> Sign Out
               </button>
             ) : (
-              <Link
-                href="/login"
-                className="flex items-center gap-2 p-2 hover:bg-secondary-100 rounded-lg transition-colors"
+              <button
+                onClick={() => navigate('/login')}
+                className="flex items-center gap-2 p-2"
               >
-                <User className="w-6 h-6" />
-                <span className="hidden sm:block text-sm font-medium">Sign In</span>
-              </Link>
+                <User /> Sign In
+              </button>
             )}
           </div>
         </div>
 
-        {/* Mobile search */}
-        {isMobileMenuOpen && (
-          <form onSubmit={handleSearch} className="md:hidden pb-4 animate-fade-in">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search for products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-secondary-50 border-0 rounded-xl 
-                           focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary-400" />
-            </div>
-          </form>
-        )}
-
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8 py-4 border-t border-secondary-100">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-secondary-600 hover:text-primary-600 font-medium transition-colors relative group"
-            >
-              {link.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-600 transition-all group-hover:w-full" />
-            </Link>
-          ))}
-          {/* Hot Deals */}
+        <nav className="hidden md:flex items-center gap-8 py-4 border-t">
+          <button onClick={() => navigate(homeHref)} className="nav-btn">
+            Home
+          </button>
+          <button onClick={() => navigate(shopHref)} className="nav-btn">
+            Shop
+          </button>
+
           <button
-            onClick={() =>
-              handleNavigate(showCartButton ? '/products?signin=true' : '/products')
-            }
-            className="ml-auto text-accent-500 hover:text-accent-600 font-medium transition-colors flex items-center gap-1"
+            onClick={() => navigate(shopHref)}
+            className="ml-auto text-orange-500 font-medium flex gap-1"
           >
-            <span>🔥</span> Hot Deals
+            🔥 Hot Deals
           </button>
         </nav>
-      </div>
 
-      {/* Mobile nav */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-secondary-100 py-4 animate-fade-in">
-          <nav className="flex flex-col gap-2 px-4">
-            {navLinks.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => handleNavigate(link.href)}
-                className="px-4 py-3 text-secondary-600 hover:text-primary-600 hover:bg-secondary-50 rounded-lg transition-colors font-medium"
-              >
-                {link.label}
-              </button>
-            ))}
-            <button
-              onClick={() => handleNavigate(showCartButton ? '/products?signin=true' : '/products')}
-              className="px-4 py-3 text-accent-500 hover:bg-secondary-50 rounded-lg transition-colors font-medium flex items-center gap-2"
-            >
-              🔥 Hot Deals
-            </button>
-          </nav>
-        </div>
-      )}
+        {/* Mobile nav */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden py-4 border-t flex flex-col gap-2">
+            <button onClick={() => navigate(homeHref)}>Home</button>
+            <button onClick={() => navigate(shopHref)}>Shop</button>
+            <button onClick={() => navigate(shopHref)}>🔥 Hot Deals</button>
+          </div>
+        )}
+      </div>
     </header>
   );
 }

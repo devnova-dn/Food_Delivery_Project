@@ -278,6 +278,7 @@ export default function CheckoutPage() {
                           First Name
                         </label>
                         <input
+                          placeholder='First name'
                           type="text"
                           value={shippingInfo.firstName}
                           onChange={(e) =>
@@ -296,6 +297,7 @@ export default function CheckoutPage() {
                           Last Name
                         </label>
                         <input
+                          placeholder='Last name'
                           type="text"
                           value={shippingInfo.lastName}
                           onChange={(e) =>
@@ -316,6 +318,7 @@ export default function CheckoutPage() {
                         Street Address
                       </label>
                       <input
+                        placeholder='Street Address'
                         type="text"
                         value={shippingInfo.street}
                         onChange={(e) =>
@@ -336,6 +339,7 @@ export default function CheckoutPage() {
                           City
                         </label>
                         <input
+                        placeholder='City'
                           type="text"
                           value={shippingInfo.city}
                           onChange={(e) =>
@@ -354,6 +358,7 @@ export default function CheckoutPage() {
                           State
                         </label>
                         <input
+                        placeholder='State'
                           type="text"
                           value={shippingInfo.state}
                           onChange={(e) =>
@@ -372,6 +377,7 @@ export default function CheckoutPage() {
                           ZIP Code
                         </label>
                         <input
+                        placeholder='ZIP Code'
                           type="text"
                           value={shippingInfo.zipCode}
                           onChange={(e) =>
@@ -393,6 +399,7 @@ export default function CheckoutPage() {
                           Country
                         </label>
                         <select
+                          title='country'
                           value={shippingInfo.country}
                           onChange={(e) =>
                             setShippingInfo({ ...shippingInfo, country: e.target.value })
@@ -410,6 +417,7 @@ export default function CheckoutPage() {
                           Phone Number
                         </label>
                         <input
+                        placeholder='Phone Number'
                           type="tel"
                           value={shippingInfo.phone}
                           onChange={(e) =>

@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     locale: 'en_US',
     siteName: 'GourmetHub',
   },
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

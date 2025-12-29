@@ -111,6 +111,8 @@ export default function CartPage() {
                       </p>
                     </div>
                     <button
+                    type='button'
+                    title='price'
                       onClick={() => removeItem(item.productId)}
                       className="p-2 text-secondary-400 hover:text-red-500 transition-colors"
                     >
@@ -122,6 +124,8 @@ export default function CartPage() {
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center gap-2">
                       <button
+                       type='button'
+                    title='quantity'
                         onClick={() =>
                           updateQuantity(item.productId, item.quantity - 1)
                         }
@@ -132,6 +136,8 @@ export default function CartPage() {
                       </button>
                       <span className="w-10 text-center font-semibold">{item.quantity}</span>
                       <button
+                       type='button'
+                    title='quantity'
                         onClick={() =>
                           updateQuantity(item.productId, item.quantity + 1)
                         }

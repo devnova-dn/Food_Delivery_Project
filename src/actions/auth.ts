@@ -52,21 +52,3 @@ export async function registerUser(data: RegisterData): Promise<AuthResponse> {
     return { success: false, error: 'Failed to create account' };
   }
 }
-
-export async function updateUserProfile(
-  userId: string,
-  data: { name?: string; phone?: string; address?: any }
-): Promise<AuthResponse> {
-  try {
-    await connectDB();
-
-    await User.findByIdAndUpdate(userId, data);
-
-    revalidatePath('/account');
-
-    return { success: true, message: 'Profile updated successfully' };
-  } catch (error) {
-    console.error('Update profile error:', error);
-    return { success: false, error: 'Failed to update profile' };
-  }
-}
