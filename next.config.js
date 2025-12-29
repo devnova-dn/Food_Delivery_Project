@@ -29,6 +29,9 @@ const nextConfig = {
       }
     ],
   },
+  experimental: {
+    optimizeFonts: false, // disable Google Fonts fetch
+  },
 };
 
 module.exports = nextConfig;

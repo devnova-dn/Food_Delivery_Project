@@ -1,68 +1,39 @@
 'use client';
 
-import { ShoppingCart, Heart, Star, Sparkles, Eye } from 'lucide-react';
+import { ShoppingCart, Star, Sparkles, Eye } from 'lucide-react';
 import { useCartStore } from '@/context/CartStore';
 import { formatCurrency, calculateDiscountPercentage } from '@/lib/utils';
 import { IProduct } from '@/types';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+
 interface ProductCardProps {
   product: IProduct;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const signin = searchParams.get('signin') === 'true';
   const router = useRouter();
   const { addItem } = useCartStore();
   const [isAdding, setIsAdding] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Fonction de débogage
-  const testNavigation = () => {
-    console.log('=== DEBUG INFO ===');
-    console.log('Product slug:', product.slug);
-    console.log('Full path:', `/products/${product.slug}`);
-    console.log('Router object:', router);
-    console.log('Product ID:', product._id);
-    console.log('==================');
-  };
-
-const handleViewDetails = (e: React.MouseEvent) => {
-  e.stopPropagation();
-
-  const path = signin
-    ? `/products/${product.slug}?signin=true`
-    : `/products/${product.slug}`;
-
-  try {
-    router.push(path);
-    console.log('Navigating to:', path);
-  } catch (error) {
-    console.error('Navigation error:', error);
-    toast.error('Navigation failed');
-  }
-};
-
-
   const discountPercentage = product.discountPrice
     ? calculateDiscountPercentage(product.price, product.discountPrice)
     : 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    if (!signin) {
-    toast.error('You must be signed in to add products to cart!', {
-      duration: 3000,
-    });
-    router.push('/login'); // redirect vers login
-    return;
-  }
     e.stopPropagation();
+    if (!signin) {
+      toast.error('You must be signed in to add products to cart!', { duration: 3000 });
+      router.push('/login');
+      return;
+    }
+
     setIsAdding(true);
 
     addItem({
@@ -75,24 +46,23 @@ const handleViewDetails = (e: React.MouseEvent) => {
       maxQuantity: product.stock,
     });
 
-    toast.success(`${product.title} added to cart!`, {
-      icon: '🛒',
-      duration: 2000,
-    });
-
+    toast.success(`${product.title} added to cart!`, { icon: '🛒', duration: 2000 });
     setTimeout(() => setIsAdding(false), 500);
   };
 
+  const handleViewDetails = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const path = signin
+      ? `/products/${product.slug}?signin=true`
+      : `/products/${product.slug}`;
+    router.push(path); // always trigger navigation
+  };
 
   const renderStars = (rating: number) =>
     Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${
-          i < Math.floor(rating)
-            ? 'fill-accent-400 text-accent-400'
-            : 'text-secondary-300'
-        }`}
+        className={`w-4 h-4 ${i < Math.floor(rating) ? 'fill-accent-400 text-accent-400' : 'text-secondary-300'}`}
       />
     ));
 
@@ -101,6 +71,7 @@ const handleViewDetails = (e: React.MouseEvent) => {
       className="group bg-white rounded-xl shadow-sm border border-secondary-200 overflow-hidden hover:shadow-lg transition-shadow duration-300 relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleViewDetails} // clicking the card navigates too
     >
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-secondary-100">
@@ -115,52 +86,39 @@ const handleViewDetails = (e: React.MouseEvent) => {
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.isOrganic && (
-            <div className="pointer-events-none">
-              <span className="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
-                <Sparkles className="w-3 h-3" />
-                Organic
-              </span>
-            </div>
+            <span className="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full flex items-center gap-1 pointer-events-none">
+              <Sparkles className="w-3 h-3" /> Organic
+            </span>
           )}
           {discountPercentage > 0 && (
-            <div className="pointer-events-none">
-              <span className="px-2 py-1 bg-accent-500 text-white text-xs font-semibold rounded-full">
-                -{discountPercentage}%
-              </span>
-            </div>
+            <span className="px-2 py-1 bg-accent-500 text-white text-xs font-semibold rounded-full pointer-events-none">
+              -{discountPercentage}%
+            </span>
           )}
           {product.rating >= 4.5 && (
-            <div className="pointer-events-none">
-              <span className="px-2 py-1 bg-primary-500 text-white text-xs font-semibold rounded-full">
-                ⭐ Top Rated
-              </span>
-            </div>
+            <span className="px-2 py-1 bg-primary-500 text-white text-xs font-semibold rounded-full pointer-events-none">
+              ⭐ Top Rated
+            </span>
           )}
         </div>
 
-        {/* Wishlist Button */}
-      <div
-  className={`absolute top-3 right-3 flex items-center gap-2 z-20 transition-all duration-300 ${
-    isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
-  }`}
->
-
-
-  {/* View Details */}
-   <button
+        {/* View Details Button */}
+        <div
+          className={`absolute top-3 right-3 flex items-center gap-2 z-20 transition-all duration-300 ${
+            isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
+          }`}
+        >
+          <button
             onClick={handleViewDetails}
             className="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-secondary-600 hover:text-primary-600 hover:bg-primary-50 transition-all duration-300"
-    aria-label="View details"
-  >
-    <Eye className="w-5 h-5" />
-  </button>
-</div>
-        {/* Quick Actions Overlay */}
-      
+            aria-label="View details"
+          >
+            <Eye className="w-5 h-5" />
+          </button>
+        </div>
 
-      
+        {/* Add to Cart Button */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          
           <button
             onClick={handleAddToCart}
             disabled={isAdding || product.stock === 0}
@@ -183,19 +141,12 @@ const handleViewDetails = (e: React.MouseEvent) => {
       {/* Product Info */}
       <div className="p-4">
         <p className="text-sm text-primary-600 font-medium mb-1">{product.brand}</p>
-        
-        {/* Version 3: Link autour du titre */}
-       <Link
-  href={signin ? `/products/${product.slug}?signin=true` : `/products/${product.slug}`}
-          className="block group/title"
-          onClick={(e) => {
-            console.log('Link clicked for:', product.slug);
-          }}
+        <h3
+          className="font-semibold text-secondary-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors cursor-pointer"
+          onClick={(e) => handleViewDetails(e)}
         >
-          <h3 className="font-semibold text-secondary-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors group-hover/title:text-primary-700">
-            {product.title}
-          </h3>
-        </Link>
+          {product.title}
+        </h3>
 
         <div className="flex items-center gap-2 mb-2">
           <div className="flex">{renderStars(product.rating)}</div>
@@ -212,15 +163,8 @@ const handleViewDetails = (e: React.MouseEvent) => {
             </span>
           )}
         </div>
-
         <p className="text-sm text-secondary-500 mt-1">per {product.unit}</p>
-       
       </div>
-
-     
-
-   
-     
     </div>
   );
 }
