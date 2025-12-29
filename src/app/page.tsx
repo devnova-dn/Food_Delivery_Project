@@ -127,15 +127,7 @@ const featuredProducts: IProduct[] = Array.isArray(featuredResult.data)
             )}
           </div>
 
-          <div className="mt-8 text-center sm:hidden">
-            <Link
-              href="/products"
-              className="btn-outline inline-flex items-center gap-2"
-            >
-              View All Products
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
+
         </div>
       </section>
 

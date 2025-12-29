@@ -107,7 +107,7 @@ export default function HeroSection() {
         </div>
 
         {/* Slide Content */}
-        <div className=" ml-16 relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+        <div className=" md:ml-16 relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
           <div
             className={`max-w-2xl transition-all duration-500 ${
               isAnimating
