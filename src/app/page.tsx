@@ -229,7 +229,3 @@ const featuredProducts: IProduct[] = Array.isArray(featuredResult.data)
     </div>
   );
 }
-
-// Demo Product Card Component
-
-
