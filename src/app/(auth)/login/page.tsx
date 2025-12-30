@@ -1,9 +1,12 @@
+// page.tsx
+'use client';
+import { Suspense } from 'react';
+import LoginForm from './LoginForm';
 
-// app/(auth)/login/page.tsx
-import LoginForm from './loginpage';
-export const dynamic = 'force-dynamic';
 export default function LoginPage() {
   return (
+    <Suspense fallback={<div>Loading...</div>}>
       <LoginForm />
+    </Suspense>
   );
 }

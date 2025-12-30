@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
 
 interface HeroSlide {
   id: number;
@@ -53,9 +52,10 @@ const heroSlides: HeroSlide[] = [
   },
 ];
 
+import { useAuth } from '@/app/providers';
+
 export default function HeroSection() {
-  const searchParams = useSearchParams();
-  const signin = searchParams.get('signin') === 'true';
+  const {signin}=useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 

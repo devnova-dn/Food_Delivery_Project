@@ -5,18 +5,18 @@ import { useCartStore } from '@/context/CartStore';
 import { formatCurrency, calculateDiscountPercentage } from '@/lib/utils';
 import { IProduct } from '@/types';
 import toast from 'react-hot-toast';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/app/providers';
 
 interface ProductCardProps {
   product: IProduct;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const searchParams = useSearchParams();
-  const signin = searchParams.get('signin') === 'true';
+  const {signin}=useAuth();
   const router = useRouter();
   const { addItem } = useCartStore();
   const [isAdding, setIsAdding] = useState(false);

@@ -4,11 +4,13 @@ import Image from 'next/image';
 import { useCartStore } from '@/context/CartStore';
 import toast from 'react-hot-toast';
 import { formatCurrency } from '@/lib/utils';
- import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-export default function DemoProductCard({ index }: { index: number }) {
-    const searchParams = useSearchParams();
-      const showCartButton = searchParams.get('signin') === 'true';
+import { useAuth } from '@/app/providers';
+type DemoProductCardProps = {
+  index: number;
+};
+export default function DemoProductCard({ index }: DemoProductCardProps) {
+      const showCartButton = useAuth();
  const router = useRouter();
   const demoProducts = [
     { title: 'Organic Avocados', price: 4.99, brand: 'Organic Valley', rating: 4.8, reviews: 234, unit: 'piece', image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=500&q=80' },

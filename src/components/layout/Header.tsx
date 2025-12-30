@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { Search, ShoppingBag, User, X, LogOut } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/context/CartStore';
 import { Menu } from 'lucide-react';
-
+import { useAuth } from '@/app/providers';
 export default function Header() {
-  const searchParams = useSearchParams();
+  const {signin}=useAuth();
   const { getItemCount, openCart } = useCartStore();
 
   const [mounted, setMounted] = useState(false);
@@ -25,7 +24,7 @@ export default function Header() {
 
   if (!mounted) return null;
 
-  const isAuth = searchParams.get('signin') === 'true';
+  const isAuth = signin;
   const itemCount = getItemCount();
 
   const homeHref = isAuth ? '/?signin=true' : '/';
