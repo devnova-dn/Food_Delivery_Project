@@ -7,23 +7,18 @@ import Link from 'next/link';
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-export default function LoginClient() {
+export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/';
+  const callbackUrl = searchParams.get('callbackUrl') ;
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{
-    email?: string;
-    password?: string;
-    general?: string;
-  }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -46,6 +41,7 @@ export default function LoginClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!validateForm()) return;
 
     setLoading(true);
@@ -56,20 +52,19 @@ export default function LoginClient() {
         email: formData.email,
         password: formData.password,
         redirect: false,
-        callbackUrl,
       });
 
       if (result?.error) {
         setErrors({ general: 'Invalid email or password' });
-        toast.error('Invalid credentials');
+        toast.error('Invalid credentials', { icon: '❌' });
       } else {
-        toast.success('Welcome back 👋');
-        router.push(callbackUrl);
+        toast.success('Welcome back!', { icon: '👋' });
+        window.location.href = '/?signin=true';
         router.refresh();
       }
-    } catch {
+    } catch (error) {
       setErrors({ general: 'Something went wrong. Please try again.' });
-      toast.error('An error occurred');
+      toast.error('An error occurred', { icon: '⚠️' });
     } finally {
       setLoading(false);
     }
@@ -85,7 +80,7 @@ export default function LoginClient() {
 
   return (
     <div className="min-h-screen bg-secondary-50 flex">
-  {/* Left Side - Form */}
+      {/* Left Side - Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           {/* Logo */}
