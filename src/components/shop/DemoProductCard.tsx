@@ -10,7 +10,7 @@ type DemoProductCardProps = {
   index: number;
 };
 export default function DemoProductCard({ index }: DemoProductCardProps) {
-      const showCartButton = useAuth();
+      const { signin } = useAuth();
  const router = useRouter();
   const demoProducts = [
     { title: 'Organic Avocados', price: 4.99, brand: 'Organic Valley', rating: 4.8, reviews: 234, unit: 'piece', image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=500&q=80' },
@@ -29,9 +29,9 @@ export default function DemoProductCard({ index }: DemoProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-if (!showCartButton) {
+if (!signin) {
       // redirect to login page with callback
-      router.push(`/login?callbackUrl=/`);
+      router.push(`/login`);
       toast('You must be signed in to add items to cart', { icon: '⚠️' });
       return;
     }

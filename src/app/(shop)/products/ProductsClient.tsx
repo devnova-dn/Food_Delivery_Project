@@ -6,11 +6,13 @@ import ProductCard from '@/components/shop/ProductCard';
 import FilterSidebar from '@/components/shop/FilterSidebar';
 import { IProduct } from '@/types';
 import { useParams, useRouter } from 'next/navigation';
+import { useAuth } from '@/app/providers';
 
 export default function ProductsClient() {
   const params = useParams();
   const router = useRouter();
   const signin = params?.signin === 'true';
+  const {search} =useAuth();
 
   const [products, setProducts] = useState<IProduct[]>([]);
   const [filters, setFilters] = useState({
@@ -25,6 +27,13 @@ export default function ProductsClient() {
   });
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
+useEffect(() => {
+  setFilters(prev => ({
+    ...prev,
+    search: search || '',
+    page: 1,
+  }));
+}, [search]);
 
   // Demo Products
   const demoProducts: IProduct[] = products.length > 0 ? products : [
